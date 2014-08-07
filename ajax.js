@@ -1,24 +1,27 @@
-/***** Ajax 4.1 *****/
+/***** Ajax 4.2.0 *****/
 
-/* require tools >= 3.0 */
+/* require tools 4.1.5 */
 
-(function (win, udef){
+(function (udf){
   //// Import ////
   
-  var udefp = $.udefp;
-  var apd = $.apd;
+  var fnp = $.fnp;
+  var udfp = $.udfp;
+  var inp = $.inp;
+  var str = $.str;
+  var emp = $.emp;
+  var fold = $.fold;
+  var att = $.att;
+  var lat = $.lat;
   var err = $.err;
   
   //// Processing ////
   
-  function params(o){
-    var s = "";
-    var first = true;
-    for (var i in o){
-      if (!first)s += "&";
-      s += i + "=" + o[i];
-    }
-    return s;
+  function prms(o){
+    return fold(function (s, x, i){
+      if (emp(s))return i + "=" + str(x);
+      return s + "&" + i + "=" + str(x);
+    }, "", o);
   }
   
   //// Main ////
@@ -29,80 +32,84 @@
   }
     
   function get(a, o){
-    if (!udefp(o)){
-      var ps = params(o);
-      if (ps != "")a += "?" + o;
-    }
+    if (udfp(o))o = {};
     
     var x = ajax();
-    x.open("GET", a, false);
+    x.open("GET", emp(o)?a:(a+"?"+prms(o)), false);
     x.send();
-    if (x.status != 200 && x.status != 304){
-      err(read, "AJAX exited with status = $1", x.status);
+    if (!inp(x.status, 200, 304)){
+      err(get, "Can't get a = $1 with o = $2 due to status $3", a, o, x.status);
     }
     return x.responseText;
   }
   
   function post(a, o){
+    if (udfp(o))o = {};
+    
     var x = ajax();
     x.open("POST", a);
     x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    x.send(params(o));
-    if (x.status != 200 && x.status != 304){
-      err(post, "AJAX exited with status = $1", x.status);
+    x.send(prms(o));
+    if (!inp(x.status, 200, 304)){
+      err(post, "Can't post a = $1 with o = $2 due to status $3", a, o, x.status);
     }
     return x.responseText;
   }
   
-  function aget(a, o, f){
-    if (!udefp(o)){
-      var ps = params(o);
-      if (ps != "")a += "?" + o;
-    }
-    
+  function aget(a, of, f){
+    if (udfp(of))return aget3(a, {}, function (){});
+    if (fnp(of))return aget3(a, {}, of);
+    return aget3(a, of, udfp(f)?function (){}:f);
+  }
+  
+  function aget3(a, o, f){
     var x = ajax();
     x.onreadystatechange = function (){
       if (x.readyState == 4){
         if (x.status == 200){
           f(x.responseText);
-        } else if (x.status == 0 || x.status == 12029){
-          setTimeout(function (){aget(a, o, f);}, 1000);
+        } else if (inp(x.status, 0, 12029)){
+          lat(function (){aget3(a, o, f);}, 1000);
         } else {
-          err(aget, "AJAX exited with status = $1", x.status);
+          err(aget3, "Can't aget a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
         }
       }
     }
-    x.open("GET", a, true);
+    x.open("GET", emp(o)?a:(a+"?"+prms(o)), true);
     x.send();
-    return true;
   }
   
-  function apost(a, o, f){
+  function apost(a, of, f){
+    if (udfp(of))return apost3(a, {}, function (){});
+    if (fnp(of))return apost3(a, {}, of);
+    return apost3(a, of, udfp(f)?function (){}:f);
+  }
+  
+  function apost3(a, o, f){
     var x = ajax();
     x.onreadystatechange = function (){
       if (x.readyState == 4){
         if (x.status == 200){
           f(x.responseText);
-        } else if (x.status == 0 || x.status == 12029){
-          setTimeout(function (){apost(a, o, f);}, 1000);
+        } else if (inp(x.status, 0, 12029)){
+          lat(function (){apost3(a, o, f);}, 1000);
         } else {
-          err(apost, "AJAX exited with status = $1", x.status);
+          err(apost3, "Can't apost a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
         }
       }
     }
     x.open("POST", a, true);
     x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    x.send(params(o));
-    return true;
+    x.send(prms(o));
   }
   
   //// Export ////
   
-  apd({
+  att({
     get: get,
     post: post,
     aget: aget,
     apost: apost
   }, $);
   
-})(window);
+})();

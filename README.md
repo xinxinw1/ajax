@@ -13,7 +13,7 @@ A couple of functions to make js ajax calls much more intuitive. For obvious rea
    <script src="ajax.js"></script>
    ```
    to your html file.
-5. Run `$.al($.get("test.txt"))` to make sure it works. (Should output 2315633991441755403248652686986908053010)
+5. Run `$.al($.get("ajax.js"))` to make sure it works.
 
 See http://xinxinw1.github.io/ajax/ for a demo.
 

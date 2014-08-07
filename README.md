@@ -1,4 +1,4 @@
-# Ajax Library
+# Intuitive Ajax Library
 
 A couple of functions to make js ajax calls much more intuitive. For obvious reasons, this doesn't work in Node.js
 

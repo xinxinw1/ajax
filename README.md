@@ -20,7 +20,8 @@ See http://xinxinw1.github.io/ajax/ for a demo.
 ## Function reference
 
 ```
-Note: The ajax library adds its functions to the $ object from the tools library, so these are all accessed by $.<insert name>
+Note: The ajax library adds its functions to the $ object from the tools
+  library, so these are all accessed by $.<insert name>
 
 get(a, o)         get url a with parameters in o
                     (eg. get("test.txt", {te: 53, a: "test"})

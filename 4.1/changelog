@@ -1,0 +1,5 @@
+Ajax 4.1 - Mar 11, 2014 14:20
+
+- getasync -> aget
+- postasync -> apost
+- fixed export bug

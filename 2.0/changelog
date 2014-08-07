@@ -1,4 +1,0 @@
-Ajax 1.1 - Jul 29, 2013 19:40
-
-- encapsulated everything in a closure and released Ajax object
-- renamed AJAX -> Ajax

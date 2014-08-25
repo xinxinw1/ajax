@@ -1,6 +1,6 @@
 # Intuitive Ajax Library
 
-A couple of functions to make js ajax calls much more intuitive. For obvious reasons, this doesn't work in Node.js
+A couple of functions that make js ajax calls much more intuitive. For obvious reasons, this doesn't work in Node.js
 
 ## How to use in HTML
 

@@ -1,5 +1,6 @@
 # This file is a dependency definition
 # See https://github.com/xinxinw1/deps for more details
-            master:ajax.js  lib
-tools       master:tools.js lib
+        master:README.md  .
+        master:ajax.js    lib
+tools   master:tools.js   lib
 

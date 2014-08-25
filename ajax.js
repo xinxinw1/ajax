@@ -1,4 +1,4 @@
-/***** Ajax 4.2.0 *****/
+/***** Ajax 4.2.1 *****/
 
 /* require tools 4.1.5 */
 
@@ -10,7 +10,7 @@
   var inp = $.inp;
   var str = $.str;
   var emp = $.emp;
-  var fold = $.fold;
+  var foldi = $.foldi;
   var att = $.att;
   var lat = $.lat;
   var err = $.err;
@@ -18,7 +18,7 @@
   //// Processing ////
   
   function prms(o){
-    return fold(function (s, x, i){
+    return foldi(function (s, x, i){
       if (emp(s))return i + "=" + str(x);
       return s + "&" + i + "=" + str(x);
     }, "", o);

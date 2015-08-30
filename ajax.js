@@ -1,6 +1,6 @@
-/***** Ajax 4.2.1 *****/
+/***** Ajax 4.3.0 *****/
 
-/* require tools 4.1.5 */
+/* require tools 4.5.0 */
 
 (function (udf){
   //// Import ////
@@ -60,6 +60,9 @@
     return x.responseText;
   }
   
+  // aget("test.php", {name: "hey", data: "what"}, function (r){alert(r);});
+  // aget("test.php", function (r){alert(r);});
+  // aget("test.php");
   function aget(a, of, f){
     if (udfp(of))return aget3(a, {}, function (){});
     if (fnp(of))return aget3(a, {}, of);
@@ -67,22 +70,30 @@
   }
   
   function aget3(a, o, f){
-    var x = ajax();
-    x.onreadystatechange = function (){
-      if (x.readyState == 4){
-        if (x.status == 200){
-          f(x.responseText);
-        } else if (inp(x.status, 0, 12029)){
-          lat(function (){aget3(a, o, f);}, 1000);
-        } else {
-          err(aget3, "Can't aget a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
+    var attempts = 0;
+    (function inner(){
+      var x = ajax();
+      x.onreadystatechange = function (){
+        if (x.readyState == 4){
+          if (x.status == 200){
+            f(x.responseText);
+          } else if (inp(x.status, 0, 12029)){
+            if (attempts == 3)err(aget3, {a: a, o: o, f: f, status: x.status}, "Can't aget a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
+            lat(inner, 1000);
+          } else {
+            err(aget3, {a: a, o: o, f: f, status: x.status}, "Can't aget a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
+          }
         }
       }
-    }
-    x.open("GET", emp(o)?a:(a+"?"+prms(o)), true);
-    x.send();
+      x.open("GET", emp(o)?a:(a+"?"+prms(o)), true);
+      x.send();
+      attempts++;
+    })();
   }
   
+  // apost("test.php", {name: "hey", data: "what"}, function (r){alert(r);});
+  // apost("test.php", function (r){alert(r);});
+  // apost("test.php");
   function apost(a, of, f){
     if (udfp(of))return apost3(a, {}, function (){});
     if (fnp(of))return apost3(a, {}, of);
@@ -90,27 +101,32 @@
   }
   
   function apost3(a, o, f){
-    var x = ajax();
-    x.onreadystatechange = function (){
-      if (x.readyState == 4){
-        if (x.status == 200){
-          f(x.responseText);
-        } else if (inp(x.status, 0, 12029)){
-          lat(function (){apost3(a, o, f);}, 1000);
-        } else {
-          err(apost3, "Can't apost a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
+    var attempts = 0;
+    (function inner(){
+      var x = ajax();
+      x.onreadystatechange = function (){
+        if (x.readyState == 4){
+          if (x.status == 200){
+            f(x.responseText);
+          } else if (inp(x.status, 0, 12029)){
+            if (attempts == 3)err(apost3, {a: a, o: o, f: f, status: x.status}, "Can't apost a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
+            lat(inner, 1000);
+          } else {
+            err(apost3, {a: a, o: o, f: f, status: x.status}, "Can't apost a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
+          }
         }
       }
-    }
-    x.open("POST", a, true);
-    x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    x.send(prms(o));
+      x.open("POST", a, true);
+      x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      x.send(prms(o));
+      attempts++;
+    })();
   }
   
+  // load("test.js")
+  // load(["a.js", "b.js", "../c.js"]);
   function load(a){
-    if (arrp(a)){
-      return las(map(load1, a));
-    }
+    if (arrp(a))return las(map(load1, a));
     return load1(a);
   }
   

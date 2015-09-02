@@ -1,6 +1,6 @@
-/***** Ajax 4.3.0 *****/
+/***** Ajax 4.4.0 *****/
 
-/* require tools 4.5.0 */
+/* require tools 4.5.1 */
 
 (function (udf){
   //// Import ////
@@ -16,6 +16,7 @@
   var foldi = $.foldi;
   var att = $.att;
   var lat = $.lat;
+  var nam = $.nam;
   var err = $.err;
   var evl = $.evl;
   
@@ -28,11 +29,38 @@
     }, "", o);
   }
   
+  //// Error ////
+  
+  var errfn = function (o){
+    err(o.fn, "Can't " + nam(o.fn) + " a = $1 with o = $2 and f = $3 due to status $4", o.a, o.o, o.f, o.status);
+  }
+  
+  function ajaxerr(f){
+    return errfn = f;
+  }
+  
   //// Main ////
   
   function ajax(){
     if (window.XMLHttpRequest)return new XMLHttpRequest();
     return new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  
+  function ajaxstate(fn, a, o, f, tries, inner){
+    var x = ajax();
+    x.onreadystatechange = function (){
+      if (x.readyState == 4){
+        if (x.status == 200){
+          f(x.responseText);
+        } else if (x.status == 0 || x.status == 12029){
+          if (tries() == 3)errfn({fn: fn, a: a, o: o, f: f, status: x.status});
+          else lat(inner, 1000);
+        } else {
+          errfn({fn: fn, a: a, o: o, f: f, status: x.status});
+        }
+      }
+    }
+    return x;
   }
     
   function get(a, o){
@@ -42,7 +70,7 @@
     x.open("GET", emp(o)?a:(a+"?"+prms(o)), false);
     x.send();
     if (!inp(x.status, 200, 304)){
-      err(get, "Can't get a = $1 with o = $2 due to status $3", a, o, x.status);
+      errfn({fn: get, a: a, o: o, status: x.status});
     }
     return x.responseText;
   }
@@ -55,7 +83,7 @@
     x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     x.send(prms(o));
     if (!inp(x.status, 200, 304)){
-      err(post, "Can't post a = $1 with o = $2 due to status $3", a, o, x.status);
+      errfn({fn: post, a: a, o: o, status: x.status});
     }
     return x.responseText;
   }
@@ -70,24 +98,16 @@
   }
   
   function aget3(a, o, f){
-    var attempts = 0;
+    var numtries = 0;
+    function tries(){
+      return numtries;
+    }
+    
     (function inner(){
-      var x = ajax();
-      x.onreadystatechange = function (){
-        if (x.readyState == 4){
-          if (x.status == 200){
-            f(x.responseText);
-          } else if (inp(x.status, 0, 12029)){
-            if (attempts == 3)err(aget3, {a: a, o: o, f: f, status: x.status}, "Can't aget a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
-            lat(inner, 1000);
-          } else {
-            err(aget3, {a: a, o: o, f: f, status: x.status}, "Can't aget a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
-          }
-        }
-      }
+      var x = ajaxstate(aget, a, o, f, tries, inner);
       x.open("GET", emp(o)?a:(a+"?"+prms(o)), true);
       x.send();
-      attempts++;
+      numtries++;
     })();
   }
   
@@ -101,25 +121,17 @@
   }
   
   function apost3(a, o, f){
-    var attempts = 0;
+    var numtries = 0;
+    function tries(){
+      return numtries;
+    }
+    
     (function inner(){
-      var x = ajax();
-      x.onreadystatechange = function (){
-        if (x.readyState == 4){
-          if (x.status == 200){
-            f(x.responseText);
-          } else if (inp(x.status, 0, 12029)){
-            if (attempts == 3)err(apost3, {a: a, o: o, f: f, status: x.status}, "Can't apost a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
-            lat(inner, 1000);
-          } else {
-            err(apost3, {a: a, o: o, f: f, status: x.status}, "Can't apost a = $1 with o = $2 and f = $3 due to status $4", a, o, f, x.status);
-          }
-        }
-      }
+      var x = ajaxstate(apost, a, o, f, tries, inner);
       x.open("POST", a, true);
       x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       x.send(prms(o));
-      attempts++;
+      numtries++;
     })();
   }
   
@@ -137,13 +149,15 @@
   //// Export ////
   
   att({
+    ajaxerr: ajaxerr,
+    
     get: get,
     post: post,
     aget: aget,
     apost: apost,
     
     load: load,
-    load1: load1,
+    load1: load1
   }, $);
   
 })();

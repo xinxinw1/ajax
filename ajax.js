@@ -1,4 +1,4 @@
-/***** Ajax 4.4.0 *****/
+/***** Ajax 4.5.0 *****/
 
 /* require tools 4.5.1 */
 
@@ -10,6 +10,11 @@
   var arrp = $.arrp;
   var inp = $.inp;
   var map = $.map;
+  var len = $.len;
+  var sli = $.sli;
+  var elm = $.elm;
+  var elms = $.elms;
+  var att = $.att;
   var las = $.las;
   var str = $.str;
   var emp = $.emp;
@@ -146,6 +151,25 @@
     return evl(get(a));
   }
   
+  function aload(a, f){
+    if (arrp(a)){
+      if (len(a) == 0)return;
+      aload1(a[0], function (){
+        aload(sli(a, 1), f);
+      });
+    } else {
+      aload1(a, f);
+    }
+  }
+  
+  function aload1(a, f){
+    var s = elm("script", {src: a});
+    s.onreadystatechange = f;
+    s.onload = f;
+    att(s, elms("head")[0]);
+  }
+
+  
   //// Export ////
   
   att({
@@ -157,7 +181,10 @@
     apost: apost,
     
     load: load,
-    load1: load1
+    load1: load1,
+    
+    aload: aload,
+    aload1: aload1
   }, $);
   
 })();

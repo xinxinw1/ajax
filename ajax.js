@@ -11,7 +11,7 @@
   var inp = $.inp;
   var map = $.map;
   var len = $.len;
-  var each = $.each;
+  var sli = $.sli;
   var elm = $.elm;
   var elms = $.elms;
   var att = $.att;
@@ -153,13 +153,10 @@
   
   function aload(a, f){
     if (arrp(a)){
-      var n = 0;
-      var l = len(a);
-      var f2 = function (){
-        n++;
-        if (n === l)f();
-      };
-      each(a, function (x){aload1(x, f2)});
+      if (len(a) == 0)return;
+      aload1(a[0], function (){
+        aload(sli(a, 1), f);
+      });
     } else {
       aload1(a, f);
     }

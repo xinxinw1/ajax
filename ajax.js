@@ -1,4 +1,4 @@
-/***** Ajax 4.5.0 *****/
+/***** Ajax 4.5.1 *****/
 
 /* require tools 4.5.1 */
 
@@ -153,7 +153,10 @@
   
   function aload(a, f){
     if (arrp(a)){
-      if (len(a) == 0)return;
+      if (len(a) == 0){
+        f();
+        return;
+      }
       aload1(a[0], function (){
         aload(sli(a, 1), f);
       });

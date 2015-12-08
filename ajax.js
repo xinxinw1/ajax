@@ -1,6 +1,6 @@
-/***** Ajax 4.5.1 *****/
+/***** Ajax 4.6.0 *****/
 
-/* require tools 4.5.1 */
+/* require tools 4.10.3 */
 
 (function (udf){
   //// Import ////
@@ -169,13 +169,13 @@
     var s = elm("script", {src: a});
     s.onreadystatechange = f;
     s.onload = f;
-    att(s, elms("head")[0]);
+    att(elms("head")[0], s);
   }
 
   
   //// Export ////
   
-  att({
+  att($, {
     ajaxerr: ajaxerr,
     
     get: get,
@@ -188,6 +188,6 @@
     
     aload: aload,
     aload1: aload1
-  }, $);
+  });
   
 })();
